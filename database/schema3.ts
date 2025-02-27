@@ -21,9 +21,5 @@ export const dynamicByuTable = (year: string, month: string) => {
         rev: varchar('rev', { length: 22 }),
         trx: varchar('trx', { length: 22 }),
         subs: varchar('subs', { length: 22 }),
-    }, t => [
-        index('event_date').on(t.eventDate).using('btree'),
-        index('kabupaten').on(t.kabupaten).using('btree'),
-        index('l1_name').on(t.l1Name).using('btree'),
-    ])
+    })
 }

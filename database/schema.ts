@@ -1,4 +1,4 @@
-import { mysqlSchema, varchar, decimal } from "drizzle-orm/mysql-core";
+import { mysqlSchema, varchar, decimal, index } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 
 export const pumaSchema = mysqlSchema("puma_2025");
@@ -16,7 +16,9 @@ export const branches = pumaSchema.table("branches_new", {
     id: varchar("id", { length: 100 }).primaryKey(),
     regionalId: varchar("id_regional", { length: 100 }).notNull(),
     branchNew: varchar("branch_new", { length: 30 }).notNull(),
-});
+}, t => [
+    index('idx_regional_id').on(t.regionalId).using('btree')
+]);
 
 export const branchRelations = relations(branches, ({ one, many }) => ({
     regional: one(regionals, {
@@ -30,7 +32,9 @@ export const subbranches = pumaSchema.table("subbranches_new", {
     id: varchar("id", { length: 100 }).primaryKey(),
     branchId: varchar("id_branch", { length: 100 }).notNull(),
     subbranchNew: varchar("subbranch_new", { length: 30 }).notNull(),
-});
+}, t => [
+    index('idx_branch_id').on(t.branchId).using('btree')
+]);
 
 export const subbranchRelations = relations(subbranches, ({ one, many }) => ({
     branch: one(branches, {
@@ -44,7 +48,9 @@ export const clusters = pumaSchema.table("clusters_new", {
     id: varchar("id", { length: 100 }).primaryKey(),
     subbranchId: varchar("subbranch_id", { length: 100 }).notNull(),
     cluster: varchar("cluster", { length: 30 }).notNull(),
-});
+}, t => [
+    index('idx_subbranch_id').on(t.subbranchId).using('btree')
+]);
 
 export const clusterRelations = relations(clusters, ({ one, many }) => ({
     subbranch: one(subbranches, {
@@ -58,7 +64,9 @@ export const kabupatens = pumaSchema.table("kabupatens", {
     id: varchar({ length: 100 }).primaryKey(),
     clusterId: varchar("id_cluster", { length: 100 }).notNull(),
     kabupaten: varchar({ length: 30 }).notNull(),
-});
+}, t => [
+    index('idx_cluster_id').on(t.clusterId).using('btree')
+]);
 
 export const kabupatenRelations = relations(kabupatens, ({ one, many }) => ({
     cluster: one(clusters, {
@@ -85,7 +93,9 @@ export const revenueGrosses = pumaSchema.table("Target_revenue_gross_2025", {
     m11: decimal("m11", { precision: 18, scale: 2 }),
     m12: decimal("m12", { precision: 18, scale: 2 }),
     year: varchar({ length: 5 }).notNull(),
-});
+}, t => [
+    index('idx_kabupaten_id').on(t.kabupatenId).using('btree')
+]);
 
 export const revenueGrossRelations = relations(revenueGrosses, ({ one }) => ({
     kabupaten: one(kabupatens, {
